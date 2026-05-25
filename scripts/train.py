@@ -59,8 +59,7 @@ def main() -> None:
     trainer = HierarchicalRLTrainer(config)
     history = trainer.train()
     print(f"Training completed. History records: {len(history)}")
-    design_name = Path(config.graph_path).stem.replace("_graph", "")
-    final_model_path = trainer.checkpoint_dir / f"final_{config.algorithm}_{design_name}.pt"
+    final_model_path = trainer.checkpoint_dir / f"final_{config.algorithm}.pt"
     trainer.agent.save(final_model_path)
 
     if args.save_final_graph:
