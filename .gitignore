@@ -126,5 +126,4 @@ config.local.yml
 Thumbs.db
 ehthumbs.db
 
-
-src/data/
+src/data/datasets
