@@ -30,11 +30,14 @@ class HierarchicalMacroPlacementEnv(gym.Env):
         max_steps: int = 200,
         movement_step: float = 0.05,
         hpwl_scale: float = 0.001,
+        improvement_scale: float = 2.0,
         randomize_initial_positions: bool = True,
         include_step_fraction: bool = False,
-        overlap_weight: float = 0.0,
+        overlap_weight: float = 10.0,
         density_weight: float = 0.0,
         congestion_weight: float = 5.0,
+        congestion_improvement_scale: float = 0.8,
+        congestion_tolerance: float = 0.5,
         num_directions: int = 64,
     ) -> None:
         super().__init__()
@@ -74,7 +77,10 @@ class HierarchicalMacroPlacementEnv(gym.Env):
         self.reward_model = PlacementReward(
             RewardConfig(
                 hpwl_scale=hpwl_scale,
+                improvement_scale=improvement_scale,
                 congestion_scale=congestion_weight,
+                congestion_improvement_scale=congestion_improvement_scale,
+                congestion_tolerance=congestion_tolerance,
             ),
             constraints=constraints,
         )

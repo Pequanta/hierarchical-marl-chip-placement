@@ -51,16 +51,13 @@ class A2CAgent:
         self.device = torch.device(device)
         self.num_directions = num_directions
         self.num_macros = num_macros or max(1, action_dim // num_directions)
-        self.edge_index = edge_index.detach().cpu() if edge_index is not None else None
+        self.edge_index = edge_index.to(self.device) if edge_index is not None else None
         if self.config.use_gnn_encoder:
-            if edge_index is None:
-                raise ValueError("A2CConfig.use_gnn_encoder=True requires edge_index.")
             if obs_dim % self.num_macros != 0:
                 raise ValueError(f"obs_dim {obs_dim} must be divisible by num_macros {self.num_macros}.")
+            self.features_per_macro = obs_dim // self.num_macros
             self.model = GNNHierarchicalActorCritic(
-                num_macros=self.num_macros,
-                features_per_macro=obs_dim // self.num_macros,
-                edge_index=edge_index,
+                features_per_macro=self.features_per_macro,
                 num_directions=num_directions,
                 hidden_channels=self.config.gnn_hidden_channels,
                 embedding_dim=self.config.gnn_embedding_dim,
@@ -68,6 +65,7 @@ class A2CAgent:
                 dropout=self.config.gnn_dropout,
             ).to(self.device)
         else:
+            self.features_per_macro = None
             self.model = HierarchicalActorCritic(
                 obs_dim=obs_dim,
                 num_macros=self.num_macros,
@@ -77,23 +75,44 @@ class A2CAgent:
             ).to(self.device)
         self.optimizer = torch.optim.RMSprop(self.model.parameters(), lr=self.config.learning_rate, eps=1e-5)
 
+    def set_graph(self, edge_index: torch.Tensor) -> None:
+        """Switch the active graph topology (call before each rollout on a new design)."""
+        self.edge_index = edge_index.to(self.device)
+
+    def _edge_index(self) -> torch.Tensor:
+        if self.edge_index is None:
+            raise RuntimeError("No graph topology set. Call set_graph(edge_index) before using the GNN agent.")
+        return self.edge_index
+
     @torch.no_grad()
     def act(self, observation, deterministic: bool = False) -> tuple[int, float, float]:
         obs = torch.as_tensor(observation, dtype=torch.float32, device=self.device)
-        action, log_prob, value = self.model.act(obs, deterministic=deterministic)
+        if self.config.use_gnn_encoder:
+            action, log_prob, value = self.model.act(obs, self._edge_index(), deterministic=deterministic)
+        else:
+            action, log_prob, value = self.model.act(obs, deterministic=deterministic)
         return int(action.item()), float(log_prob.item()), float(value.item())
 
     @torch.no_grad()
     def value(self, observation) -> float:
         obs = torch.as_tensor(observation, dtype=torch.float32, device=self.device)
-        _, _, values = self.model.forward(obs)
+        if self.config.use_gnn_encoder:
+            _, _, values = self.model.forward(obs, self._edge_index())
+        else:
+            _, _, values = self.model.forward(obs)
         return float(values.item())
 
     def update(self, buffer: RolloutBuffer) -> dict[str, float]:
         batch = buffer.as_tensors()
-        log_probs, entropy, values = self.model.evaluate_actions(batch.observations, batch.actions)
+        if self.config.use_gnn_encoder:
+            log_probs, entropy, values = self.model.evaluate_actions(
+                batch.observations, batch.actions, self._edge_index()
+            )
+        else:
+            log_probs, entropy, values = self.model.evaluate_actions(batch.observations, batch.actions)
         policy_loss = -(log_probs * batch.advantages).mean()
-        value_loss = F.mse_loss(values, batch.returns)
+        normalized_returns = (batch.returns - batch.returns.mean()) / (batch.returns.std() + 1e-8)
+        value_loss = F.mse_loss(values, normalized_returns)
         loss = policy_loss + self.config.value_coef * value_loss - self.config.entropy_coef * entropy.mean()
 
         self.optimizer.zero_grad(set_to_none=True)
@@ -110,8 +129,8 @@ class A2CAgent:
 
     def save(self, path: str | Path) -> None:
         obs_dim = getattr(self.model, "obs_dim", None)
-        if obs_dim is None:
-            obs_dim = self.num_macros * getattr(self.model, "features_per_macro", 0)
+        if obs_dim is None and self.features_per_macro is not None:
+            obs_dim = self.num_macros * self.features_per_macro
         torch.save(
             {
                 "state_dict": self.model.state_dict(),
@@ -119,7 +138,7 @@ class A2CAgent:
                 "num_macros": self.num_macros,
                 "num_directions": self.num_directions,
                 "obs_dim": obs_dim,
-                "edge_index": self.edge_index,
+                "features_per_macro": self.features_per_macro,
             },
             path,
         )
@@ -128,14 +147,17 @@ class A2CAgent:
     def load(cls, path: str | Path, device: str | torch.device = "cpu") -> "A2CAgent":
         payload = torch.load(path, map_location=device)
         config = A2CConfig(**payload["config"])
+        num_macros = payload["num_macros"]
+        features_per_macro = payload.get("features_per_macro")
+        obs_dim = payload.get("obs_dim") or (num_macros * features_per_macro if features_per_macro else num_macros)
         agent = cls(
-            obs_dim=payload["obs_dim"],
-            action_dim=payload["num_macros"] * payload["num_directions"],
-            num_macros=payload["num_macros"],
+            obs_dim=obs_dim,
+            action_dim=num_macros * payload["num_directions"],
+            num_macros=num_macros,
             num_directions=payload["num_directions"],
             config=config,
             device=device,
-            edge_index=payload.get("edge_index"),
+            # edge_index intentionally omitted — caller must call set_graph() before use
         )
         agent.model.load_state_dict(payload["state_dict"])
         return agent
