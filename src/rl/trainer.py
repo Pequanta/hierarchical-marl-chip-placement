@@ -106,6 +106,8 @@ class TrainerConfig:
             "include_step_fraction": "step_fraction" in observation.get("fields", []),
             "overlap_weight": _penalty_weight(penalties, "overlap"),
             "density_weight": _penalty_weight(penalties, "density"),
+            "congestion_weight": _penalty_weight(penalties, "congestion"),
+            "num_directions": int(trainer.get("num_directions", action_space.get("num_directions", 64))),
         }
 
         return cls(
@@ -122,7 +124,7 @@ class TrainerConfig:
                 project_root,
             ),
             save_best_graph=bool(trainer.get("save_best_graph", True)),
-            num_directions=int(trainer.get("num_directions", action_space.get("num_directions", 4))),
+            num_directions=int(trainer.get("num_directions", action_space.get("num_directions", 64))),
             env_config=env_kwargs,
             eval_env_config=env_kwargs.copy(),
             algorithm_config=algorithm_config,

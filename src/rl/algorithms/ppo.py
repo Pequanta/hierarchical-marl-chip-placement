@@ -28,7 +28,7 @@ def mlp(input_dim: int, hidden_dim: int, output_dim: int, layers: int = 2) -> nn
 
 
 class HierarchicalActorCritic(nn.Module):
-    """Factorizes placement actions into macro choice and movement direction."""
+    """Factorizes placement actions into macro choice and movement direction/grid placement."""
 
     def __init__(
         self,
@@ -44,14 +44,28 @@ class HierarchicalActorCritic(nn.Module):
         self.num_directions = num_directions
         self.encoder = mlp(obs_dim, hidden_dim, hidden_dim, hidden_layers)
         self.macro_head = nn.Linear(hidden_dim, num_macros)
-        self.direction_head = nn.Linear(hidden_dim, num_directions)
+        if num_directions == 64:
+            self.subregion_head = nn.Linear(hidden_dim, 4)
+            self.grid_cell_head = nn.Linear(hidden_dim, 16)
+        else:
+            self.direction_head = nn.Linear(hidden_dim, num_directions)
         self.value_head = nn.Linear(hidden_dim, 1)
 
     def forward(self, observations: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         if observations.dim() == 1:
             observations = observations.unsqueeze(0)
         features = self.encoder(observations)
-        return self.macro_head(features), self.direction_head(features), self.value_head(features).squeeze(-1)
+        macro_logits = self.macro_head(features)
+        if self.num_directions == 64:
+            subregion_logits = self.subregion_head(features)
+            grid_cell_logits = self.grid_cell_head(features)
+            # Combine logits to form joint worker action space logits (4 x 16 = 64)
+            joint_logits = subregion_logits.unsqueeze(-1) + grid_cell_logits.unsqueeze(-2)
+            direction_logits = joint_logits.view(subregion_logits.shape[0], -1)
+        else:
+            direction_logits = self.direction_head(features)
+        values = self.value_head(features).squeeze(-1)
+        return macro_logits, direction_logits, values
 
     def distribution(self, observations: torch.Tensor) -> tuple[Categorical, Categorical, torch.Tensor]:
         macro_logits, direction_logits, values = self.forward(observations)
@@ -180,7 +194,9 @@ class PPOAgent:
         return metrics
 
     def save(self, path: str | Path) -> None:
-        obs_dim = getattr(self.model, "obs_dim", self.num_macros * self.model.features_per_macro)
+        obs_dim = getattr(self.model, "obs_dim", None)
+        if obs_dim is None:
+            obs_dim = self.num_macros * getattr(self.model, "features_per_macro", 0)
         payload = {
             "state_dict": self.model.state_dict(),
             "config": self.config.__dict__,

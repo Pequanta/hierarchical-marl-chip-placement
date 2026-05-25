@@ -109,13 +109,16 @@ class A2CAgent:
         }
 
     def save(self, path: str | Path) -> None:
+        obs_dim = getattr(self.model, "obs_dim", None)
+        if obs_dim is None:
+            obs_dim = self.num_macros * getattr(self.model, "features_per_macro", 0)
         torch.save(
             {
                 "state_dict": self.model.state_dict(),
                 "config": self.config.__dict__,
                 "num_macros": self.num_macros,
                 "num_directions": self.num_directions,
-                "obs_dim": getattr(self.model, "obs_dim", self.num_macros * self.model.features_per_macro),
+                "obs_dim": obs_dim,
                 "edge_index": self.edge_index,
             },
             path,

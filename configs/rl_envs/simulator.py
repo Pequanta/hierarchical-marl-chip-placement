@@ -27,10 +27,33 @@ def load_graph(graph_path: str | Path) -> tuple[Data, dict[str, Any]]:
         payload = torch.load(graph_path, map_location="cpu", weights_only=False)
 
     if isinstance(payload, dict) and "graph" in payload:
-        return payload["graph"], dict(payload.get("metadata", {}))
-    if isinstance(payload, Data):
-        return payload, {}
-    raise ValueError(f"Unsupported graph file format: {graph_path}")
+        graph, metadata = payload["graph"], dict(payload.get("metadata", {}))
+    elif isinstance(payload, Data):
+        graph, metadata = payload, {}
+    else:
+        raise ValueError(f"Unsupported graph file format: {graph_path}")
+
+    if hasattr(graph, "x") and graph.x is not None:
+        # Extract width and height (indices 0 and 1)
+        w = graph.x[:, 0]
+        h = graph.x[:, 1]
+        area = w * h
+        aspect_ratio = w / (h + 1e-6)
+
+        num_nodes = int(graph.num_nodes)
+        degrees = torch.zeros(num_nodes, dtype=torch.float32)
+        if hasattr(graph, "edge_index") and graph.edge_index is not None and graph.edge_index.numel() > 0:
+            src = graph.edge_index[0]
+            degrees.scatter_add_(0, src, torch.ones_like(src, dtype=torch.float32))
+
+        # Estimate pin count as a function of connectivity degree
+        pin_count = degrees * 3.0 + 10.0
+
+        # Build new features: [w, h, area, pin_count, aspect_ratio, connectivity_degree]
+        # Width and height remain at indices 0 & 1 for compatibility with density/overlap logic
+        graph.x = torch.stack([w, h, area, pin_count, aspect_ratio, degrees], dim=1)
+
+    return graph, metadata
 
 
 class PlacementSimulator:
@@ -73,11 +96,12 @@ class PlacementSimulator:
 
     def step(self, action) -> StepResult:
         decoded = self.action_codec.decode(action)
-        delta = torch.as_tensor(
+        # Treat directions coordinate center as absolute placement target
+        grid_pos = torch.as_tensor(
             self.action_codec.delta(decoded.direction_index),
             dtype=self.graph.pos.dtype,
             device=self.graph.pos.device,
         )
-        self.graph.pos[decoded.macro_index] = self.graph.pos[decoded.macro_index] + delta
+        self.graph.pos[decoded.macro_index] = grid_pos
         self.constraints.apply(self.graph)
         return StepResult(graph=self.graph, action=decoded)
