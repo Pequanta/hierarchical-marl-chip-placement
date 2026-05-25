@@ -11,7 +11,7 @@ encoder:
     type: graph_sage
     message_passing: src.models.gnn.message_passing.MacroPlacementMessagePassing
     layers: 2
-    in_channels: 6
+    in_channels: 8
     hidden_channels: 128
     out_channels: 256
     activation: relu
@@ -36,8 +36,8 @@ feature_schema:
     - height
     - area
     - pin_count
-    - degree
-    - cluster_or_type_id
+    - aspect_ratio
+    - connectivity_degree
   edge:
     - connectivity
     - net_weight

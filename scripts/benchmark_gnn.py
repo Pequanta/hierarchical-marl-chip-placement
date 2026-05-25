@@ -15,14 +15,7 @@ from scripts.placement_benchmark import compute_metrics
 from scripts.train_gnn import GNNPlacementRegressor, graph_features
 
 
-def load_dataset(graph_path: str | Path) -> tuple[Data, dict[str, Any]]:
-    with safe_globals([Data]):
-        data = torch.load(graph_path, map_location="cpu", weights_only=False)
-    if isinstance(data, dict) and "graph" in data:
-        return data["graph"], data.get("metadata", {})
-    if isinstance(data, Data):
-        return data, {}
-    raise ValueError(f"Unsupported .pt file format: {graph_path}")
+from configs.rl_envs.simulator import load_graph as load_dataset
 
 
 def graph_paths_from_args(paths: list[str], graph_glob: str | None) -> list[Path]:

@@ -38,7 +38,50 @@ class RewardConfig:
     improvement_scale: float = 5.0
     overlap_scale: float = 10.0
     density_scale: float = 2.0
+    congestion_scale: float = 5.0
     terminal_bonus_scale: float = 5.0
+
+
+def compute_bin_overflow_congestion(
+    graph,
+    bins: int = 10,
+    target_density: float = 0.7,
+) -> float:
+    canvas = canvas_size(graph)
+    canvas_area = canvas[0] * canvas[1]
+    bin_area = canvas_area / (bins * bins)
+    bin_capacity = bin_area * target_density
+
+    pos = graph.pos.detach().cpu().numpy() if isinstance(graph.pos, torch.Tensor) else np.asarray(graph.pos)
+    sizes = graph.x[:, :2].detach().cpu().numpy() if isinstance(graph.x, torch.Tensor) else np.asarray(graph.x)[:, :2]
+
+    grid = np.zeros((bins, bins), dtype=np.float32)
+
+    for i in range(graph.num_nodes):
+        cx, cy = pos[i, 0] * canvas[0], pos[i, 1] * canvas[1]
+        w, h = sizes[i, 0], sizes[i, 1]
+
+        x_min, x_max = cx - w / 2.0, cx + w / 2.0
+        y_min, y_max = cy - h / 2.0, cy + h / 2.0
+
+        for bx in range(bins):
+            bin_x_min = (bx / bins) * canvas[0]
+            bin_x_max = ((bx + 1) / bins) * canvas[0]
+            overlap_x = max(0.0, min(x_max, bin_x_max) - max(x_min, bin_x_min))
+            if overlap_x <= 0.0:
+                continue
+
+            for by in range(bins):
+                bin_y_min = (by / bins) * canvas[1]
+                bin_y_max = ((by + 1) / bins) * canvas[1]
+                overlap_y = max(0.0, min(y_max, bin_y_max) - max(y_min, bin_y_min))
+                if overlap_y <= 0.0:
+                    continue
+
+                grid[by, bx] += overlap_x * overlap_y
+
+    overflow = np.maximum(0.0, grid - bin_capacity)
+    return float(np.sum(overflow))
 
 
 def compute_density_penalty(
@@ -98,16 +141,20 @@ class PlacementReward:
         hpwl = compute_hpwl(graph)
         overlap_penalty = self.constraints.penalty(graph)
         density_penalty = compute_density_penalty(graph)
+        congestion_penalty = compute_bin_overflow_congestion(graph, bins=10, target_density=0.7)
 
         #normalization 
         hpwl_norm = hpwl / 2000.0
         overlap_norm = overlap_penalty / 100000.0
         density_norm = density_penalty / 1000.0
+        canvas = canvas_size(graph)
+        congestion_norm = congestion_penalty / (canvas[0] * canvas[1])
 
         reward = (
             -self.config.hpwl_scale * hpwl_norm
             -self.config.overlap_scale * overlap_norm
             -self.config.density_scale * density_norm
+            -self.config.congestion_scale * congestion_norm
         )
 
         #relative improvement reward
@@ -136,5 +183,6 @@ class PlacementReward:
             "hpwl": float(hpwl),
             "overlap_penalty": float(overlap_penalty),
             "density_penalty": float(density_penalty),
+            "congestion_penalty": float(congestion_penalty),
             "improvement": float(improvement),
         }
