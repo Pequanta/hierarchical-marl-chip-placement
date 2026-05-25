@@ -167,6 +167,10 @@ class PPOAgent:
 
     def update(self, buffer: RolloutBuffer) -> dict[str, float]:
         metrics: dict[str, float] = {}
+        # Compute return statistics once over the full buffer for stable value normalization.
+        full_batch = buffer.as_tensors()
+        returns_mean = full_batch.returns.mean()
+        returns_std = full_batch.returns.std() + 1e-8
         for _ in range(self.config.update_epochs):
             for batch in buffer.minibatches(self.config.batch_size):
                 log_probs, entropy, values = self.model.evaluate_actions(batch.observations, batch.actions)
@@ -174,7 +178,8 @@ class PPOAgent:
                 unclipped = ratio * batch.advantages
                 clipped = torch.clamp(ratio, 1.0 - self.config.clip_range, 1.0 + self.config.clip_range) * batch.advantages
                 policy_loss = -torch.min(unclipped, clipped).mean()
-                value_loss = F.mse_loss(values, batch.returns)
+                normalized_returns = (batch.returns - returns_mean) / returns_std
+                value_loss = F.mse_loss(values, normalized_returns)
                 entropy_loss = -entropy.mean()
                 loss = policy_loss + self.config.value_coef * value_loss + self.config.entropy_coef * entropy_loss
 

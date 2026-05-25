@@ -127,10 +127,10 @@ class PlacementReward:
     def __init__(self, config: RewardConfig | None = None, constraints: PlacementConstraints | None = None) -> None:
         self.config = config or RewardConfig()
         self.constraints = constraints or PlacementConstraints()
-        self.previous_hpwl: float | None = None
+        self.initial_hpwl: float | None = None
 
     def reset(self, graph) -> None:
-        self.previous_hpwl = compute_hpwl(graph)
+        self.initial_hpwl = compute_hpwl(graph)
 
     def __call__(
         self,
@@ -143,12 +143,17 @@ class PlacementReward:
         density_penalty = compute_density_penalty(graph)
         congestion_penalty = compute_bin_overflow_congestion(graph, bins=10, target_density=0.7)
 
-        #normalization 
-        hpwl_norm = hpwl / 2000.0
-        overlap_norm = overlap_penalty / 100000.0
-        density_norm = density_penalty / 1000.0
         canvas = canvas_size(graph)
-        congestion_norm = congestion_penalty / (canvas[0] * canvas[1])
+        # Normalize HPWL by the maximum possible HPWL (diagonal × number of edges)
+        # to make the scale robust across designs of different sizes.
+        canvas_diagonal = float(np.sqrt(canvas[0] ** 2 + canvas[1] ** 2))
+        num_edges = max(1, graph.edge_index.shape[1] // 2 if hasattr(graph, "edge_index") and graph.edge_index is not None and graph.edge_index.numel() > 0 else 1)
+        hpwl_norm_denom = max(canvas_diagonal * num_edges, 1e-6)
+        hpwl_norm = hpwl / hpwl_norm_denom
+
+        overlap_norm = overlap_penalty / max(canvas[0] * canvas[1], 1e-6)
+        density_norm = density_penalty / max(canvas[0] * canvas[1], 1e-6)
+        congestion_norm = congestion_penalty / max(canvas[0] * canvas[1], 1e-6)
 
         reward = (
             -self.config.hpwl_scale * hpwl_norm
@@ -157,27 +162,16 @@ class PlacementReward:
             -self.config.congestion_scale * congestion_norm
         )
 
-        #relative improvement reward
+        # Improvement relative to episode start — prevents reward gaming via
+        # oscillation (moving a macro away then back for step-level delta gains).
         improvement = 0.0
+        if self.initial_hpwl is not None and self.initial_hpwl > 1e-6:
+            improvement = (self.initial_hpwl - hpwl) / self.initial_hpwl
+            reward += self.config.improvement_scale * improvement
 
-        if self.previous_hpwl is not None:
-            improvement = (
-                self.previous_hpwl - hpwl
-            ) / max(self.previous_hpwl, 1e-6)
-
-            reward += (
-                self.config.improvement_scale *
-                improvement
-            )
-
-        #Terminal bonus for final improvement
+        # Terminal bonus rewards overall episode-level HPWL reduction.
         if terminated:
-            reward += (
-                self.config.terminal_bonus_scale *
-                max(improvement, 0.0)
-            )
-
-        self.previous_hpwl = hpwl
+            reward += self.config.terminal_bonus_scale * max(improvement, 0.0)
 
         return float(reward), {
             "hpwl": float(hpwl),

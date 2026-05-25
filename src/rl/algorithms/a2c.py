@@ -93,7 +93,8 @@ class A2CAgent:
         batch = buffer.as_tensors()
         log_probs, entropy, values = self.model.evaluate_actions(batch.observations, batch.actions)
         policy_loss = -(log_probs * batch.advantages).mean()
-        value_loss = F.mse_loss(values, batch.returns)
+        normalized_returns = (batch.returns - batch.returns.mean()) / (batch.returns.std() + 1e-8)
+        value_loss = F.mse_loss(values, normalized_returns)
         loss = policy_loss + self.config.value_coef * value_loss - self.config.entropy_coef * entropy.mean()
 
         self.optimizer.zero_grad(set_to_none=True)
