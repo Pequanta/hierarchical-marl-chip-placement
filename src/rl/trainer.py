@@ -305,14 +305,18 @@ class HierarchicalRLTrainer:
             self.best_eval_reward = result.mean_reward
             self._save_checkpoint(step, result)
 
+    @property
+    def design_name(self) -> str:
+        return Path(self.config.graph_path).stem.replace("_graph", "")
+
     def _save_checkpoint(self, step: int, result: EvaluationResult) -> None:
-        model_path = self.checkpoint_dir / f"best_{self.config.algorithm}.pt"
+        model_path = self.checkpoint_dir / f"best_{self.config.algorithm}_{self.design_name}.pt"
         save = getattr(self.agent, "save", None)
         if callable(save):
             save(model_path)
 
         if self.config.save_best_graph and hasattr(self.eval_env, "graph"):
-            graph_path = self.checkpoint_dir / f"best_placement_step_{step}.pt"
+            graph_path = self.checkpoint_dir / f"best_placement_{self.design_name}_step_{step}.pt"
             torch.save(
                 {
                     "graph": self.eval_env.graph,
