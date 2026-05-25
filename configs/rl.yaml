@@ -35,7 +35,7 @@ trainer:
   eval_frequency: 10000
   eval_episodes: 3
   seed: 42
-  device: cpu
+  device: gpu
   checkpoint_dir: checkpoints
   save_best_graph: true
   num_directions: 64
