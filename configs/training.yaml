@@ -14,12 +14,12 @@ data:
     - src/data/preprocessed/real-connection/MemPool_tile/Nangate45/MemPool_tile_Nangate45_graph.pt
 
 runtime:
-  device: gpu
+  device: cpu
   num_workers: 1
   deterministic: false
 
 schedule:
-  total_timesteps: 10000
+  total_timesteps: 100000
   rollout_steps: 2048
   eval_frequency: 10000
   eval_episodes: 3
