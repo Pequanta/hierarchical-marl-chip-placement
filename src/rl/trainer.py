@@ -106,6 +106,8 @@ class TrainerConfig:
             "include_step_fraction": "step_fraction" in observation.get("fields", []),
             "overlap_weight": _penalty_weight(penalties, "overlap"),
             "density_weight": _penalty_weight(penalties, "density"),
+            "congestion_weight": _penalty_weight(penalties, "congestion"),
+            "num_directions": int(trainer.get("num_directions", action_space.get("num_directions", 64))),
         }
 
         return cls(
@@ -122,7 +124,7 @@ class TrainerConfig:
                 project_root,
             ),
             save_best_graph=bool(trainer.get("save_best_graph", True)),
-            num_directions=int(trainer.get("num_directions", action_space.get("num_directions", 4))),
+            num_directions=int(trainer.get("num_directions", action_space.get("num_directions", 64))),
             env_config=env_kwargs,
             eval_env_config=env_kwargs.copy(),
             algorithm_config=algorithm_config,
@@ -194,6 +196,7 @@ class HierarchicalRLTrainer:
         raise ValueError(f"Unsupported algorithm: {self.config.algorithm}")
 
     def train(self) -> list[dict[str, Any]]:
+        print(f"Starting training with algorithm: {self.config.algorithm.upper()} on device: {self.device}")
         if self.config.algorithm == "dqn":
             return self._train_dqn()
         return self._train_on_policy()
@@ -245,6 +248,7 @@ class HierarchicalRLTrainer:
             last_value = 0.0 if last_done else self.agent.value(observation)
             buffer.compute_returns_and_advantages(last_value=last_value, last_done=last_done)
             train_metrics = self.agent.update(buffer)
+            print(f"Step: {global_step}, Train Metrics: {train_metrics}")
             self._maybe_evaluate(global_step, train_metrics)
 
         return self.history
@@ -285,6 +289,7 @@ class HierarchicalRLTrainer:
                 episode_reward = 0.0
                 episode_length = 0
 
+            print(f"Step: {step}, Train Metrics: {train_metrics}")
             self._maybe_evaluate(step, train_metrics)
 
         return self.history

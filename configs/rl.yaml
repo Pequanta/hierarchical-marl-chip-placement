@@ -21,20 +21,7 @@ framework:
     value_head: value_head
 
 actions:
-  num_directions: 4
-  directions:
-    0:
-      name: north
-      delta: [0.0, 0.05]
-    1:
-      name: south
-      delta: [0.0, -0.05]
-    2:
-      name: west
-      delta: [-0.05, 0.0]
-    3:
-      name: east
-      delta: [0.05, 0.0]
+  num_directions: 64
   bounds:
     low: 0.0
     high: 1.0
@@ -51,7 +38,7 @@ trainer:
   device: cpu
   checkpoint_dir: checkpoints
   save_best_graph: true
-  num_directions: 4
+  num_directions: 64
 
 algorithms:
   ppo:

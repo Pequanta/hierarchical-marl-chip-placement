@@ -46,13 +46,36 @@ class GNNHierarchicalActorCritic(nn.Module):
             dropout=dropout,
         )
         self.macro_head = nn.Linear(embedding_dim, 1)
-        self.direction_head = nn.Sequential(nn.Linear(embedding_dim, embedding_dim), nn.Tanh(), nn.Linear(embedding_dim, num_directions))
+        if num_directions == 64:
+            self.subregion_head = nn.Sequential(
+                nn.Linear(embedding_dim, embedding_dim),
+                nn.Tanh(),
+                nn.Linear(embedding_dim, 4)
+            )
+            self.grid_cell_head = nn.Sequential(
+                nn.Linear(embedding_dim, embedding_dim),
+                nn.Tanh(),
+                nn.Linear(embedding_dim, 16)
+            )
+        else:
+            self.direction_head = nn.Sequential(
+                nn.Linear(embedding_dim, embedding_dim),
+                nn.Tanh(),
+                nn.Linear(embedding_dim, num_directions)
+            )
         self.value_head = nn.Sequential(nn.Linear(embedding_dim, embedding_dim), nn.Tanh(), nn.Linear(embedding_dim, 1))
 
     def forward(self, observations: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         rep = self.representation(observations)
         macro_logits = self.macro_head(rep.node_embeddings).squeeze(-1)
-        direction_logits = self.direction_head(rep.graph_embedding)
+        if self.num_directions == 64:
+            subregion_logits = self.subregion_head(rep.graph_embedding)
+            grid_cell_logits = self.grid_cell_head(rep.graph_embedding)
+            # Combine logits to form joint worker action space logits (4 x 16 = 64)
+            joint_logits = subregion_logits.unsqueeze(-1) + grid_cell_logits.unsqueeze(-2)
+            direction_logits = joint_logits.view(subregion_logits.shape[0], -1)
+        else:
+            direction_logits = self.direction_head(rep.graph_embedding)
         values = self.value_head(rep.graph_embedding).squeeze(-1)
         return macro_logits, direction_logits, values
 

@@ -14,6 +14,14 @@ class HierarchicalAction:
     macro_index: int
     direction_index: int
 
+    @property
+    def subregion_index(self) -> int:
+        return self.direction_index // 16
+
+    @property
+    def grid_cell_index(self) -> int:
+        return self.direction_index % 16
+
 
 class HierarchicalActionSpace:
     """Codec for hierarchical macro-placement actions.
@@ -22,12 +30,15 @@ class HierarchicalActionSpace:
     ``action = macro_index * num_directions + direction_index``.
     """
 
+    # Generate 64 grid selection centers: 4 subregions (2x2) x 16 grid cells (4x4)
     DEFAULT_DIRECTIONS = np.asarray(
         [
-            [0.0, 0.05],
-            [0.0, -0.05],
-            [-0.05, 0.0],
-            [0.05, 0.0],
+            [
+                (s % 2) * 0.5 + ((c % 4 + 0.5) / 4.0) * 0.5,
+                (s // 2) * 0.5 + ((c // 4 + 0.5) / 4.0) * 0.5
+            ]
+            for s in range(4)
+            for c in range(16)
         ],
         dtype=np.float32,
     )

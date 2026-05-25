@@ -34,6 +34,8 @@ class HierarchicalMacroPlacementEnv(gym.Env):
         include_step_fraction: bool = False,
         overlap_weight: float = 0.0,
         density_weight: float = 0.0,
+        congestion_weight: float = 5.0,
+        num_directions: int = 64,
     ) -> None:
         super().__init__()
         self.graph_path = str(graph_path)
@@ -41,19 +43,22 @@ class HierarchicalMacroPlacementEnv(gym.Env):
         self.randomize_initial_positions = bool(randomize_initial_positions)
         self.current_step = 0
 
-        directions = [
-            [0.0, movement_step],
-            [0.0, -movement_step],
-            [-movement_step, 0.0],
-            [movement_step, 0.0],
-        ]
-
         simulator, metadata = PlacementSimulator.from_file(self.graph_path)
         self.metadata_info: dict[str, Any] = metadata
         self.graph = simulator.graph
         self.num_macros = int(self.graph.num_nodes)
 
-        self.hierarchical_action_space = HierarchicalActionSpace(self.num_macros, directions=directions)
+        if num_directions == 64:
+            self.hierarchical_action_space = HierarchicalActionSpace(self.num_macros, directions=None)
+        else:
+            directions = [
+                [0.0, movement_step],
+                [0.0, -movement_step],
+                [-movement_step, 0.0],
+                [movement_step, 0.0],
+            ]
+            self.hierarchical_action_space = HierarchicalActionSpace(self.num_macros, directions=directions)
+
         self.manager_action_space = self.hierarchical_action_space.manager_space
         self.worker_action_space = self.hierarchical_action_space.worker_space
         self.action_space = self.hierarchical_action_space.flat_space
@@ -66,7 +71,13 @@ class HierarchicalMacroPlacementEnv(gym.Env):
         self.simulator = PlacementSimulator(self.graph, action_space=self.hierarchical_action_space, constraints=constraints)
         self.state_encoder = PlacementStateEncoder(self.graph, include_step_fraction=include_step_fraction)
         self.observation_space = self.state_encoder.observation_space
-        self.reward_model = PlacementReward(RewardConfig(hpwl_scale=hpwl_scale), constraints=constraints)
+        self.reward_model = PlacementReward(
+            RewardConfig(
+                hpwl_scale=hpwl_scale,
+                congestion_scale=congestion_weight,
+            ),
+            constraints=constraints,
+        )
 
     def reset(self, seed: int | None = None, options: dict[str, Any] | None = None):
         super().reset(seed=seed)

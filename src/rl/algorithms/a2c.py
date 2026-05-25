@@ -109,14 +109,33 @@ class A2CAgent:
         }
 
     def save(self, path: str | Path) -> None:
+        obs_dim = getattr(self.model, "obs_dim", None)
+        if obs_dim is None:
+            obs_dim = self.num_macros * getattr(self.model, "features_per_macro", 0)
         torch.save(
             {
                 "state_dict": self.model.state_dict(),
                 "config": self.config.__dict__,
                 "num_macros": self.num_macros,
                 "num_directions": self.num_directions,
-                "obs_dim": getattr(self.model, "obs_dim", self.num_macros * self.model.features_per_macro),
+                "obs_dim": obs_dim,
                 "edge_index": self.edge_index,
             },
             path,
         )
+
+    @classmethod
+    def load(cls, path: str | Path, device: str | torch.device = "cpu") -> "A2CAgent":
+        payload = torch.load(path, map_location=device)
+        config = A2CConfig(**payload["config"])
+        agent = cls(
+            obs_dim=payload["obs_dim"],
+            action_dim=payload["num_macros"] * payload["num_directions"],
+            num_macros=payload["num_macros"],
+            num_directions=payload["num_directions"],
+            config=config,
+            device=device,
+            edge_index=payload.get("edge_index"),
+        )
+        agent.model.load_state_dict(payload["state_dict"])
+        return agent
