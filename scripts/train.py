@@ -9,14 +9,15 @@ import yaml
 
 from _common import PROJECT_ROOT, resolve_project_path
 from src.rl import HierarchicalRLTrainer, TrainerConfig
-
+from pathlib import Path
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Train a hierarchical RL macro-placement agent.")
     parser.add_argument("--rl-config", default="configs/rl.yaml", help="Path to RL YAML config.")
     parser.add_argument("--env-config", default="configs/env.yaml", help="Path to environment YAML config.")
     parser.add_argument("--training-config", default="configs/training.yaml", help="Path to training YAML config.")
-    parser.add_argument("--graph-path", default=None, help="Override graph path from config.")
+    parser.add_argument("--graph-path", default=None, help="Override primary graph path from config.")
+    parser.add_argument("--graph-paths", nargs="*", default=None, help="Additional designs for multi-design GNN training.")
     parser.add_argument("--algorithm", choices=["ppo", "a2c", "dqn"], default=None, help="Override algorithm.")
     parser.add_argument("--timesteps", type=int, default=None, help="Override total training timesteps.")
     parser.add_argument("--checkpoint-dir", default=None, help="Override checkpoint directory.")
@@ -35,6 +36,8 @@ def main() -> None:
     print(f"Resolved training config: {asdict(config)}")
     if args.graph_path:
         config.graph_path = str(resolve_project_path(args.graph_path))
+    if args.graph_paths:
+        config.graph_paths = [str(resolve_project_path(p)) for p in args.graph_paths]
     if args.algorithm:
         config.algorithm = args.algorithm
         with resolve_project_path(args.rl_config).open("r", encoding="utf-8") as handle:

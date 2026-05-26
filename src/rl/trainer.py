@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Literal
@@ -49,6 +50,9 @@ class TrainerConfig:
     env_config: dict[str, Any] = field(default_factory=dict)
     eval_env_config: dict[str, Any] = field(default_factory=dict)
     algorithm_config: dict[str, Any] = field(default_factory=dict)
+    # Additional designs for multi-design GNN training. Each rollout samples one design
+    # uniformly at random. Empty list means single-design training (uses graph_path only).
+    graph_paths: list[str] = field(default_factory=list)
 
     @classmethod
     def from_yaml(
@@ -102,13 +106,20 @@ class TrainerConfig:
             "max_steps": episode.get("max_steps", 200),
             "movement_step": action_space.get("movement_step", 0.05),
             "hpwl_scale": reward.get("hpwl_scale", 0.001),
+            "improvement_scale": float(reward.get("improvement_scale", 2.0)),
             "randomize_initial_positions": episode.get("randomize_initial_positions", True),
             "include_step_fraction": "step_fraction" in observation.get("fields", []),
             "overlap_weight": _penalty_weight(penalties, "overlap"),
             "density_weight": _penalty_weight(penalties, "density"),
             "congestion_weight": _penalty_weight(penalties, "congestion"),
+            "congestion_improvement_scale": float(reward.get("congestion_improvement_scale", 0.8)),
+            "congestion_tolerance": float(reward.get("congestion_tolerance", 0.5)),
             "num_directions": int(trainer.get("num_directions", action_space.get("num_directions", 64))),
         }
+
+        extra_paths = [
+            _resolve_path(p, project_root) for p in trainer.get("graph_paths", dataset.get("graph_paths", []))
+        ]
 
         return cls(
             graph_path=_resolve_path(graph_path, project_root),
@@ -128,17 +139,23 @@ class TrainerConfig:
             env_config=env_kwargs,
             eval_env_config=env_kwargs.copy(),
             algorithm_config=algorithm_config,
+            graph_paths=extra_paths,
         )
 
 
 class HierarchicalRLTrainer:
-    """End-to-end trainer for macro-placement agents."""
+    """End-to-end trainer for macro-placement agents.
+
+    When `config.graph_paths` is non-empty, each on-policy rollout samples one design
+    uniformly at random from the pool. This exposes the GNN encoder to diverse circuit
+    topologies during training, producing transferable placement representations.
+    """
 
     def __init__(self, config: TrainerConfig, env: Any | None = None) -> None:
         self.config = config
         self.device = torch.device(config.device)
-        self.env = env or self._make_env(config.env_config)
-        self.eval_env = self._make_env(config.eval_env_config or config.env_config)
+        self.env = env or self._make_env(config.env_config, config.graph_path)
+        self.eval_env = self._make_env(config.eval_env_config or config.env_config, config.graph_path)
         self.checkpoint_dir = Path(config.checkpoint_dir)
         self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
@@ -153,16 +170,27 @@ class HierarchicalRLTrainer:
         self.action_dim = int(self.env.action_space.n)
         self.num_macros = getattr(self.env, "num_macros", max(1, self.action_dim // config.num_directions))
         self.agent = self._build_agent()
+        self._sync_agent_graph(self.env)  # prime edge_index for the primary design
         self.best_eval_reward = -float("inf")
         self.history: list[dict[str, Any]] = []
 
-    def _make_env(self, env_config: dict[str, Any]) -> Any:
+        # Build the pool of training environments for multi-design training.
+        # Always includes the primary env; additional paths create their own env instances.
+        if config.graph_paths:
+            self._design_envs: list[Any] = [self.env] + [
+                self._make_env(config.env_config, path) for path in config.graph_paths
+            ]
+        else:
+            self._design_envs = [self.env]
+
+    def _make_env(self, env_config: dict[str, Any], graph_path: str | None = None) -> Any:
+        path = graph_path or self.config.graph_path
         try:
-            return MacroPlacementEnv(self.config.graph_path, **env_config)
+            return MacroPlacementEnv(path, **env_config)
         except TypeError:
             legacy_keys = {"max_steps"}
             legacy_config = {key: value for key, value in env_config.items() if key in legacy_keys}
-            return MacroPlacementEnv(self.config.graph_path, **legacy_config)
+            return MacroPlacementEnv(path, **legacy_config)
 
     def _build_agent(self) -> Any:
         cfg = self.config.algorithm_config
@@ -202,17 +230,28 @@ class HierarchicalRLTrainer:
         return self._train_on_policy()
 
     def _train_on_policy(self) -> list[dict[str, Any]]:
-        observation, _ = self.env.reset(seed=self.config.seed)
         episode_reward = 0.0
         episode_length = 0
         completed_episodes = 0
         global_step = 0
 
+        # Pick first design and initialise.
+        active_env = self._sample_design_env()
+        observation, _ = active_env.reset(seed=self.config.seed)
+
         while global_step < self.config.total_timesteps:
+            # Sample a design for this rollout. For single-design training this is a no-op.
+            active_env = self._sample_design_env()
+            self._sync_agent_graph(active_env)
+            obs_shape = tuple(active_env.observation_space.shape)
+            observation, _ = active_env.reset()
+            episode_reward = 0.0
+            episode_length = 0
+
             steps = min(self.config.rollout_steps, self.config.total_timesteps - global_step)
             buffer = RolloutBuffer(
                 capacity=steps,
-                observation_shape=self.obs_shape,
+                observation_shape=obs_shape,
                 gamma=self.agent.config.gamma,
                 gae_lambda=self.agent.config.gae_lambda,
                 device=self.device,
@@ -221,7 +260,7 @@ class HierarchicalRLTrainer:
 
             for _ in range(steps):
                 action, log_prob, value = self.agent.act(observation)
-                next_observation, reward, terminated, truncated, _ = self.env.step(action)
+                next_observation, reward, terminated, truncated, _ = active_env.step(action)
                 done = bool(terminated or truncated)
                 buffer.add(observation, action, reward, done, value, log_prob)
 
@@ -241,7 +280,7 @@ class HierarchicalRLTrainer:
                         }
                     )
                     completed_episodes += 1
-                    observation, _ = self.env.reset()
+                    observation, _ = active_env.reset()
                     episode_reward = 0.0
                     episode_length = 0
 
@@ -252,6 +291,16 @@ class HierarchicalRLTrainer:
             self._maybe_evaluate(global_step, train_metrics)
 
         return self.history
+
+    def _sample_design_env(self) -> Any:
+        """Return a random env from the design pool (uniform sampling)."""
+        return random.choice(self._design_envs)
+
+    def _sync_agent_graph(self, env: Any) -> None:
+        """Push the current env's graph topology to the agent (GNN path only)."""
+        set_graph = getattr(self.agent, "set_graph", None)
+        if callable(set_graph) and hasattr(env, "graph") and hasattr(env.graph, "edge_index"):
+            set_graph(env.graph.edge_index.to(self.device))
 
     def _train_dqn(self) -> list[dict[str, Any]]:
         cfg: DQNConfig = self.agent.config

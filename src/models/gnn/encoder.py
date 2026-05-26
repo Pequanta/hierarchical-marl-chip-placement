@@ -93,29 +93,38 @@ class GNNEncoder(nn.Module):
 
 
 class FlatPlacementObservationEncoder(nn.Module):
-    """Encodes flattened placement observations with a shared graph topology.
+    """Encodes flattened placement observations with a dynamically supplied graph topology.
 
-    Environments in this repo expose observations as `[pos_x, pos_y, features...]`
-    repeated for every macro. This module reconstructs node features, runs the GNN,
-    and returns representations suitable for actor/critic heads.
+    Environments expose observations as `[pos_x, pos_y, features...]` repeated for every
+    macro. This module reconstructs node features, runs the GNN, and returns representations
+    suitable for actor/critic heads.
+
+    Unlike the previous version, `num_macros` and `edge_index` are **not** stored as fixed
+    model state. `num_macros` is inferred from the observation shape at runtime, and
+    `edge_index` is passed as an argument to `forward()`. This makes the same model weights
+    applicable to designs with different macro counts and connectivity patterns.
+
+    Args:
+        features_per_macro: Number of features per node (fixed across all designs).
+        num_macros: Accepted for backward compatibility but ignored — use observation shape.
+        edge_index: Accepted for backward compatibility but ignored — pass to forward().
     """
 
     def __init__(
         self,
-        num_macros: int,
         features_per_macro: int,
-        edge_index: torch.Tensor,
         hidden_channels: int = 128,
         out_channels: int = 256,
         num_layers: int = 2,
         dropout: float = 0.1,
         conv_type: ConvolutionType = "sage",
         pooling: PoolingType = "mean",
+        num_macros: int | None = None,
+        edge_index: torch.Tensor | None = None,
     ) -> None:
         super().__init__()
-        self.num_macros = int(num_macros)
+        del num_macros, edge_index  # accepted for backward compat; topology is passed to forward()
         self.features_per_macro = int(features_per_macro)
-        self.obs_dim = self.num_macros * self.features_per_macro
         self.encoder = GNNEncoder(
             in_channels=features_per_macro,
             hidden_channels=hidden_channels,
@@ -125,7 +134,6 @@ class FlatPlacementObservationEncoder(nn.Module):
             conv_type=conv_type,
             pooling=pooling,
         )
-        self.register_buffer("edge_index", edge_index.long())
 
     @property
     def output_dim(self) -> int:
@@ -134,17 +142,26 @@ class FlatPlacementObservationEncoder(nn.Module):
     def observation_to_nodes(self, observations: torch.Tensor) -> torch.Tensor:
         if observations.dim() == 1:
             observations = observations.unsqueeze(0)
-        expected_dim = self.num_macros * self.features_per_macro
-        if observations.shape[-1] != expected_dim:
-            raise ValueError(f"Expected flattened observation dim {expected_dim}, got {observations.shape[-1]}.")
-        return observations.reshape(observations.shape[0], self.num_macros, self.features_per_macro)
+        if observations.shape[-1] % self.features_per_macro != 0:
+            raise ValueError(
+                f"Observation dim {observations.shape[-1]} is not divisible by "
+                f"features_per_macro {self.features_per_macro}."
+            )
+        num_macros = observations.shape[-1] // self.features_per_macro
+        return observations.reshape(observations.shape[0], num_macros, self.features_per_macro)
 
-    def forward(self, observations: torch.Tensor) -> GNNRepresentation:
+    def forward(self, observations: torch.Tensor, edge_index: torch.Tensor) -> GNNRepresentation:
+        """Encode observations using the provided graph topology.
+
+        Args:
+            observations: Flattened node features of shape (batch, num_macros * features_per_macro).
+            edge_index: Graph connectivity for this design, shape (2, num_edges).
+        """
         node_features = self.observation_to_nodes(observations)
         node_embeddings = []
         graph_embeddings = []
         for graph_features in node_features:
-            representation = self.encoder.represent(graph_features, self.edge_index)
+            representation = self.encoder.represent(graph_features, edge_index)
             node_embeddings.append(representation.node_embeddings)
             graph_embeddings.append(representation.graph_embedding.squeeze(0))
         return GNNRepresentation(
