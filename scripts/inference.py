@@ -113,6 +113,10 @@ def main() -> None:
     env = _load_env(args.graph_path, args.device)
     _validate_agent_env(agent, env)
 
+    set_graph = getattr(agent, "set_graph", None)
+    if callable(set_graph) and hasattr(env, "graph") and hasattr(env.graph, "edge_index"):
+        set_graph(env.graph.edge_index)
+
     print(f"Running inference for {args.episodes} episode(s) on graph {args.graph_path}")
     result = evaluate_policy(agent, env, episodes=args.episodes, deterministic=args.deterministic)
     summary = {
