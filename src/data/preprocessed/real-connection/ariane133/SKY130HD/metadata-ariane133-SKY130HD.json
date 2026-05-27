@@ -1,0 +1,551 @@
+{
+  "design": "ariane133",
+  "pdk": "SKY130HD",
+  "node_counts": {
+    "macro": 133,
+    "soft_macro": 758,
+    "port": 495,
+    "total": 1386
+  },
+  "edge_count_undirected": 10500,
+  "canvas_size_um": [
+    3720.325,
+    3720.325
+  ],
+  "feature_dim": 5,
+  "lef_macros": {
+    "i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[3].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[4].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[5].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[6].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[7].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[0].tag_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[0].tag_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[0].tag_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[3].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[4].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[5].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[6].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[7].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[1].tag_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[1].tag_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[1].tag_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[3].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[4].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[5].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[6].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[7].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[2].tag_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[2].tag_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[2].tag_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[3].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[4].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[5].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[6].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[7].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[3].tag_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[3].tag_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_icache/sram_block[3].tag_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[3].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[4].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[5].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[6].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[7].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[0].tag_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[0].tag_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[0].tag_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[3].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[4].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[5].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[6].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[7].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[1].tag_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[1].tag_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[1].tag_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[3].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[4].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[5].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[6].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[7].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[2].tag_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[2].tag_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[2].tag_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[3].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[4].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[5].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[6].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[7].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[3].tag_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[3].tag_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[3].tag_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[3].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[4].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[5].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[6].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[7].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[4].tag_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[4].tag_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[4].tag_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[3].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[4].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[5].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[6].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[7].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[5].tag_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[5].tag_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[5].tag_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[3].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[4].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[5].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[6].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[7].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[6].tag_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[6].tag_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[6].tag_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[3].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[4].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[5].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[6].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[7].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[7].tag_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[7].tag_sram/macro_mem[1].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/sram_block[7].tag_sram/macro_mem[2].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    },
+    "i_cache_subsystem/i_nbdcache/valid_dirty_sram/macro_mem[0].i_ram": {
+      "width": 285.66,
+      "height": 187.68
+    }
+  },
+  "source": "TILOS-AI-Institute/MacroPlacement output_CT_Grouping"
+}
