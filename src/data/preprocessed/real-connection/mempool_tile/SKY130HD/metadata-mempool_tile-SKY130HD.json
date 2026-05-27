@@ -1,0 +1,99 @@
+{
+  "design": "mempool_tile",
+  "pdk": "SKY130HD",
+  "node_counts": {
+    "macro": 20,
+    "soft_macro": 565,
+    "port": 1272,
+    "total": 1857
+  },
+  "edge_count_undirected": 6984,
+  "canvas_size_um": [
+    2358.044,
+    2358.044
+  ],
+  "feature_dim": 5,
+  "lef_macros": {
+    "i_tile/gen_banks[0].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_banks[10].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_banks[11].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_banks[12].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_banks[13].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_banks[14].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_banks[15].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_banks[1].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_banks[2].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_banks[3].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_banks[4].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_banks[5].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_banks[6].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_banks[7].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_banks[8].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_banks[9].mem_bank/genblk1.sram_instance": {
+      "width": 293.94,
+      "height": 349.52
+    },
+    "i_tile/gen_caches[0].i_snitch_icache/i_lookup/i_data/genblk1.fr_sp_instance0": {
+      "width": 189.98,
+      "height": 232.56
+    },
+    "i_tile/gen_caches[0].i_snitch_icache/i_lookup/i_data/genblk1.fr_sp_instance1": {
+      "width": 189.98,
+      "height": 232.56
+    },
+    "i_tile/gen_caches[0].i_snitch_icache/i_lookup/i_data/genblk1.fr_sp_instance2": {
+      "width": 189.98,
+      "height": 232.56
+    },
+    "i_tile/gen_caches[0].i_snitch_icache/i_lookup/i_data/genblk1.fr_sp_instance3": {
+      "width": 189.98,
+      "height": 232.56
+    }
+  },
+  "source": "TILOS-AI-Institute/MacroPlacement output_CT_Grouping"
+}

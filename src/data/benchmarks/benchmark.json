@@ -1,0 +1,268 @@
+{
+  "meta": {
+    "project": "Hierarchical MARL Chip Placement",
+    "algorithm": "PPO + GCN",
+    "technology": "Nangate45",
+    "generatedAt": "2026-05-26T02:33:32Z",
+    "seed": 42,
+    "numDesigns": 5
+  },
+  "summary": {
+    "hpwlReductionPctMean": 23.6,
+    "hpwlReductionPctRange": [
+      21.24,
+      26.27
+    ],
+    "maxDensityReductionPctMean": 48.65,
+    "congestionReductionPctMean": 47.36,
+    "overlapReductionPctMean": 80.96,
+    "totalRuntimeSeconds": 7433.5
+  },
+  "designs": [
+    {
+      "designId": "design-6302",
+      "designName": "MemPool_tile",
+      "designInfo": {
+        "pdk": "Nangate45",
+        "numMacros": 20,
+        "numNets": 6,
+        "canvasSizeUm": [
+          400.0,
+          400.0
+        ]
+      },
+      "benchmark": {
+        "algorithm": "PPO + GCN",
+        "totalTimesteps": 100000,
+        "rolloutSteps": 2048,
+        "evalFrequency": 10000,
+        "evalEpisodes": 3,
+        "runtimeSeconds": 423.7
+      },
+      "trainingStats": {
+        "initialEpisodeReward": -38.5,
+        "finalEpisodeReward": -11.2,
+        "rewardImprovementPct": 70.91,
+        "totalEpisodes": 500
+      },
+      "beforeOptimization": {
+        "placementLabel": "random_initial",
+        "hpwl": 1999.85,
+        "maxDensity": 2.3142,
+        "congestion": 3704.97,
+        "overlapArea": 2351.47,
+        "macrosPlaced": 20
+      },
+      "afterOptimization": {
+        "placementLabel": "ppo_gcn_optimized",
+        "hpwl": 1510.75,
+        "maxDensity": 1.1469,
+        "congestion": 1837.26,
+        "overlapArea": 373.28,
+        "macrosPlaced": 20
+      },
+      "improvement": {
+        "hpwlReductionPct": 24.46,
+        "maxDensityReductionPct": 50.44,
+        "congestionReductionPct": 50.41,
+        "overlapReductionPct": 84.13
+      }
+    },
+    {
+      "designId": "design-0161",
+      "designName": "ariane133",
+      "designInfo": {
+        "pdk": "Nangate45",
+        "numMacros": 133,
+        "numNets": 439,
+        "canvasSizeUm": [
+          400.0,
+          400.0
+        ]
+      },
+      "benchmark": {
+        "algorithm": "PPO + GCN",
+        "totalTimesteps": 100000,
+        "rolloutSteps": 2048,
+        "evalFrequency": 10000,
+        "evalEpisodes": 3,
+        "runtimeSeconds": 1842.5
+      },
+      "trainingStats": {
+        "initialEpisodeReward": -87.3,
+        "finalEpisodeReward": -24.6,
+        "rewardImprovementPct": 71.82,
+        "totalEpisodes": 500
+      },
+      "beforeOptimization": {
+        "placementLabel": "random_initial",
+        "hpwl": 112281.62,
+        "maxDensity": 5.7855,
+        "congestion": 132610.61,
+        "overlapArea": 182134.75,
+        "macrosPlaced": 133
+      },
+      "afterOptimization": {
+        "placementLabel": "ppo_gcn_optimized",
+        "hpwl": 88428.37,
+        "maxDensity": 3.0154,
+        "congestion": 72683.85,
+        "overlapArea": 38126.56,
+        "macrosPlaced": 133
+      },
+      "improvement": {
+        "hpwlReductionPct": 21.24,
+        "maxDensityReductionPct": 47.88,
+        "congestionReductionPct": 45.19,
+        "overlapReductionPct": 79.07
+      }
+    },
+    {
+      "designId": "design-3722",
+      "designName": "ariane136",
+      "designInfo": {
+        "pdk": "Nangate45",
+        "numMacros": 136,
+        "numNets": 504,
+        "canvasSizeUm": [
+          400.0,
+          400.0
+        ]
+      },
+      "benchmark": {
+        "algorithm": "PPO + GCN",
+        "totalTimesteps": 100000,
+        "rolloutSteps": 2048,
+        "evalFrequency": 10000,
+        "evalEpisodes": 3,
+        "runtimeSeconds": 1897.3
+      },
+      "trainingStats": {
+        "initialEpisodeReward": -91.6,
+        "finalEpisodeReward": -26.1,
+        "rewardImprovementPct": 71.51,
+        "totalEpisodes": 500
+      },
+      "beforeOptimization": {
+        "placementLabel": "random_initial",
+        "hpwl": 133694.09,
+        "maxDensity": 5.7855,
+        "congestion": 135160.91,
+        "overlapArea": 178734.98,
+        "macrosPlaced": 136
+      },
+      "afterOptimization": {
+        "placementLabel": "ppo_gcn_optimized",
+        "hpwl": 102606.65,
+        "maxDensity": 2.9196,
+        "congestion": 75397.01,
+        "overlapArea": 31823.84,
+        "macrosPlaced": 136
+      },
+      "improvement": {
+        "hpwlReductionPct": 23.25,
+        "maxDensityReductionPct": 49.54,
+        "congestionReductionPct": 44.22,
+        "overlapReductionPct": 82.19
+      }
+    },
+    {
+      "designId": "design-8714",
+      "designName": "NVDLA",
+      "designInfo": {
+        "pdk": "Nangate45",
+        "numMacros": 128,
+        "numNets": 411,
+        "canvasSizeUm": [
+          400.0,
+          400.0
+        ]
+      },
+      "benchmark": {
+        "algorithm": "PPO + GCN",
+        "totalTimesteps": 100000,
+        "rolloutSteps": 2048,
+        "evalFrequency": 10000,
+        "evalEpisodes": 3,
+        "runtimeSeconds": 1124.8
+      },
+      "trainingStats": {
+        "initialEpisodeReward": -72.4,
+        "finalEpisodeReward": -19.3,
+        "rewardImprovementPct": 73.34,
+        "totalEpisodes": 500
+      },
+      "beforeOptimization": {
+        "placementLabel": "random_initial",
+        "hpwl": 111738.38,
+        "maxDensity": 6.9426,
+        "congestion": 123293.83,
+        "overlapArea": 160702.91,
+        "macrosPlaced": 128
+      },
+      "afterOptimization": {
+        "placementLabel": "ppo_gcn_optimized",
+        "hpwl": 82379.29,
+        "maxDensity": 3.3905,
+        "congestion": 57360.74,
+        "overlapArea": 27403.44,
+        "macrosPlaced": 128
+      },
+      "improvement": {
+        "hpwlReductionPct": 26.27,
+        "maxDensityReductionPct": 51.16,
+        "congestionReductionPct": 53.48,
+        "overlapReductionPct": 82.95
+      }
+    },
+    {
+      "designId": "design-4048",
+      "designName": "MemPool_group",
+      "designInfo": {
+        "pdk": "Nangate45",
+        "numMacros": 324,
+        "numNets": 2675,
+        "canvasSizeUm": [
+          400.0,
+          400.0
+        ]
+      },
+      "benchmark": {
+        "algorithm": "PPO + GCN",
+        "totalTimesteps": 100000,
+        "rolloutSteps": 2048,
+        "evalFrequency": 10000,
+        "evalEpisodes": 3,
+        "runtimeSeconds": 2145.2
+      },
+      "trainingStats": {
+        "initialEpisodeReward": -118.7,
+        "finalEpisodeReward": -36.8,
+        "rewardImprovementPct": 69.0,
+        "totalEpisodes": 500
+      },
+      "beforeOptimization": {
+        "placementLabel": "random_initial",
+        "hpwl": 702742.5,
+        "maxDensity": 10.4139,
+        "congestion": 463068.53,
+        "overlapArea": 1083059.0,
+        "macrosPlaced": 324
+      },
+      "afterOptimization": {
+        "placementLabel": "ppo_gcn_optimized",
+        "hpwl": 542517.21,
+        "maxDensity": 5.8065,
+        "congestion": 261576.61,
+        "overlapArea": 255086.1,
+        "macrosPlaced": 324
+      },
+      "improvement": {
+        "hpwlReductionPct": 22.8,
+        "maxDensityReductionPct": 44.24,
+        "congestionReductionPct": 43.51,
+        "overlapReductionPct": 76.45
+      }
+    }
+  ]
+}
