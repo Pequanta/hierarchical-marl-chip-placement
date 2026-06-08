@@ -272,8 +272,65 @@ MPLCONFIGDIR=/tmp .venv/bin/python scripts/visualize_layout.py \
   --title "PPO Rollout Placement" \
   --save results/plots/ppo_rollout_layout.png
 ```
+## Frontend side visualization
+### There exists a separate repo for visualization and GUI usage without worrying about the verbose structure of the library [MARL-Frontend](https://github.com/ECEIncubator-Addis/frontend-hierarchical-marl-chip-placement.git)
 
-## Quick Smoke Test
+```bash
+# cloning and installation of dependencies for the frontend
+git clone https://github.com/ECEIncubator-Addis/frontend-hierarchical-marl-chip-placement.git
+
+cd frontend-hierarchical-marl-chip-placement
+
+bun install
+
+#running the frontend
+bun dev
+```
+### To setup the backend
+
+```bash
+#cloning and installation of dependencies for the backend
+
+git clone git@github.com:ECEIncubator-Addis/backend-hierarchical-marl-chip-placement.git
+
+cd backend-hierarchical-marl-chip-placement
+
+uv init
+
+uv venv --python 3.12
+
+uv add -r requirements.txt
+
+```
+
+### Setup your enviroments
+
+```txt 
+#.env
+
+DB_URL=YOUR-DB-URL
+DB_NAME=chip_placement
+```
+
+### Runnign the backend 
+```bash
+uvicorn main:app --host 0.0.0.0 --port 3001 --reload
+```
+
+## The Frontend Contains
+### Homepage
+<img width="2799" height="1583" alt="home_page" src="https://github.com/user-attachments/assets/8b1a66af-2d6c-4229-b0b2-00a21b5c5775" />
+
+### Gallary
+<img width="2799" height="1583" alt="gallary" src="https://github.com/user-attachments/assets/2eea4dc0-5f5d-4935-a19b-4c6493a16b4f" />
+
+### An interface to schedule your designs for optimization
+<img width="2852" height="847" alt="optimize" src="https://github.com/user-attachments/assets/587f0482-5d1b-4385-86ca-2c3fa8641527" />
+
+### Results
+<img width="2799" height="1583" alt="results" src="https://github.com/user-attachments/assets/9fccd375-5589-455f-a541-f738333ca1ab" />
+
+### Quick Smoke Test
 
 Run a tiny training pass into `/tmp` to confirm the scripts are wired correctly:
 
