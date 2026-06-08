@@ -272,8 +272,61 @@ MPLCONFIGDIR=/tmp .venv/bin/python scripts/visualize_layout.py \
   --title "PPO Rollout Placement" \
   --save results/plots/ppo_rollout_layout.png
 ```
+## Frontend side visualization
+### There exists a separate repo for visualization and GUI usage without worrying about the verbose structure of the library [MARL-Frontend](https://github.com/ECEIncubator-Addis/frontend-hierarchical-marl-chip-placement.git)
 
-## Quick Smoke Test
+```bash
+# cloning and installation of dependencies for the frontend
+git clone https://github.com/ECEIncubator-Addis/frontend-hierarchical-marl-chip-placement.git
+
+cd frontend-hierarchical-marl-chip-placement
+
+bun install
+
+#running the frontend
+bun dev
+```
+### To setup the backend
+
+```bash
+#cloning and installation of dependencies for the backend
+
+git clone git@github.com:ECEIncubator-Addis/backend-hierarchical-marl-chip-placement.git
+
+cd backend-hierarchical-marl-chip-placement
+
+uv init
+
+uv venv --python 3.12
+
+uv add -r requirements.txt
+
+```
+
+### Setup your enviroments
+
+```txt 
+#.env
+
+DB_URL=YOUR-DB-URL
+DB_NAME=chip_placement
+```
+
+### Runnign the backend 
+```bash
+uvicorn main:app --host 0.0.0.0 --port 3001 --reload
+```
+
+## The Frontend Contains
+### Homepage
+
+### Gallary
+
+### An interface to schedule your designs for optimization
+
+### Results
+
+### Quick Smoke Test
 
 Run a tiny training pass into `/tmp` to confirm the scripts are wired correctly:
 
