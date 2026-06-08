@@ -319,12 +319,16 @@ uvicorn main:app --host 0.0.0.0 --port 3001 --reload
 
 ## The Frontend Contains
 ### Homepage
+<img width="2799" height="1583" alt="home_page" src="https://github.com/user-attachments/assets/8b1a66af-2d6c-4229-b0b2-00a21b5c5775" />
 
 ### Gallary
+<img width="2799" height="1583" alt="gallary" src="https://github.com/user-attachments/assets/2eea4dc0-5f5d-4935-a19b-4c6493a16b4f" />
 
 ### An interface to schedule your designs for optimization
+<img width="2852" height="847" alt="optimize" src="https://github.com/user-attachments/assets/587f0482-5d1b-4385-86ca-2c3fa8641527" />
 
 ### Results
+<img width="2799" height="1583" alt="results" src="https://github.com/user-attachments/assets/9fccd375-5589-455f-a541-f738333ca1ab" />
 
 ### Quick Smoke Test
 
